@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mac OS Presentation Pro</title>
+    <style>
+      :root {
+        --bg-color: #2c3e50;
+        --window-bg: #ffffff;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        transition: all 0.5s ease;
+      }
+
+      /* Container Utama */
+      #app-container {
+        width: 85%;
+        max-width: 1100px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      }
+
+      .mac-window {
+        background: var(--window-bg);
+        border-radius: 12px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 75vh;
+      }
+
+      /* Top Bar */
+      .title-bar {
+        height: 38px;
+        background: linear-gradient(to bottom, #ebebeb, #d1d1d1);
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        border-bottom: 1px solid #b1b1b1;
+        cursor: default;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 8px;
+      }
+
+      .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        color: rgba(0, 0, 0, 0.5);
+        font-weight: bold;
+      }
+
+      .dot:hover::after {
+        opacity: 1;
+      }
+
+      .red {
+        background: #ff5f56;
+        border: 0.5px solid #e0443e;
+      }
+      .yellow {
+        background: #ffbd2e;
+        border: 0.5px solid #dea123;
+      }
+      .green {
+        background: #27c93f;
+        border: 0.5px solid #1aab29;
+      }
+
+      /* Area Slide */
+      .content-area {
+        flex-grow: 1;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+
+      .slide {
+        display: none;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      /* Efek Minimize */
+      .minimized {
+        transform: translateY(100vh) scale(0.1);
+        opacity: 0;
+      }
+
+      /* Navigasi Overlay */
+      .nav-overlay {
+        position: absolute;
+        bottom: 20px;
+        display: flex;
+        gap: 15px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        padding: 8px 15px;
+        border-radius: 20px;
+        opacity: 0;
+        transition: 0.3s;
+      }
+
+      .content-area:hover .nav-overlay {
+        opacity: 1;
+      }
+
+      .btn-nav {
+        background: white;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+
+      /* Pesan saat Close */
+      #closed-msg {
+        display: none;
+        color: white;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="closed-msg">
+      <h2>Aplikasi Ditutup</h2>
+      <button onclick="location.reload()">Buka Kembali</button>
+    </div>
+
+    <div id="app-container">
+      <div class="mac-window" id="myWindow">
+        <div class="title-bar">
+          <div class="buttons">
+            <div class="dot red" title="Close" onclick="closeApp()"></div>
+            <div
+              class="dot yellow"
+              title="Minimize"
+              onclick="minimizeApp()"
+            ></div>
+            <div
+              class="dot green"
+              title="Fullscreen"
+              onclick="toggleFullscreen()"
+            ></div>
+          </div>
+          <div style="margin-left: 20px; font-size: 13px; color: #555">
+            Presentasi Imam & Arya
+          </div>
+        </div>
+
+        <div class="content-area" id="presentationArea">
+          <img src="1.png" class="slide active" />
+          <img src="2.png" class="slide" />
+          <img src="3.png" class="slide" />
+          <img src="4.png" class="slide" />
+          <img src="5.png" class="slide" />
+          <img src="6.png" class="slide" />
+          <img src="7.png" class="slide" />
+          <img src="8.png" class="slide" />
+          <img src="9.png" class="slide" />
+          <img src="10.png" class="slide" />
+          <div class="nav-overlay">
+            <button class="btn-nav" onclick="changeSlide(-1)">Prev</button>
+            <button class="btn-nav" onclick="changeSlide(1)">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const app = document.getElementById("app-container");
+      const win = document.getElementById("myWindow");
+      const closedMsg = document.getElementById("closed-msg");
+
+      // 1. FUNGSI TOMBOL MERAH (CLOSE)
+      function closeApp() {
+        if (confirm("Tutup aplikasi presentasi?")) {
+          app.style.display = "none";
+          closedMsg.style.display = "block";
+        }
+      }
+
+      // 2. FUNGSI TOMBOL KUNING (MINIMIZE)
+      let isMinimized = false;
+      function minimizeApp() {
+        app.classList.add("minimized");
+        setTimeout(() => {
+          alert("Aplikasi di-minimize. Klik OK untuk restore.");
+          app.classList.remove("minimized");
+        }, 600);
+      }
+
+      // 3. FUNGSI TOMBOL HIJAU (FULLSCREEN)
+      function toggleFullscreen() {
+        const elem = document.getElementById("presentationArea");
+        if (!document.fullscreenElement) {
+          elem.requestFullscreen().catch((err) => {
+            alert(`Error: ${err.message}`);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      // Logika Slide
+      let currentSlide = 0;
+      const slides = document.querySelectorAll(".slide");
+
+      function changeSlide(n) {
+        slides[currentSlide].classList.remove("active");
+        currentSlide = (currentSlide + n + slides.length) % slides.length;
+        slides[currentSlide].classList.add("active");
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") changeSlide(1);
+        if (e.key === "ArrowLeft") changeSlide(-1);
+        if (e.key === "Escape" && document.fullscreenElement)
+          document.exitFullscreen();
+      });
+    </script>
+  </body>
+</html>
